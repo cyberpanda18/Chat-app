@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>ChatRoom</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--control the page’s dimensions and scaling. -->
+    <link rel="stylesheet" href="style.css">
+    <!--prompt the user to enter their name which will be stored in name variable-->
+    <script>
+        var name = prompt("Please enter your name");
+    </script>
+</head>
+
+<body>
+
+    <div id="intro">
+        <h1>ChatRoom</h1>
+    </div>
+
+    <ul id="messages"></ul>
+
+    <form action="">
+        <input id="m" placeholder="Enter your message..." autocomplete="off" required /><button>Send</button>
+    </form>
+    <!--try to connect to the host that serves the page-->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+
+        var socket = io();
+        //emit a joining msg event along with the name of the user
+        socket.emit('joining msg', name);
+        //$ - in Jquery selecting all instances of the html element in brackets ; here - form
+        $('form').submit(function (e) {
+            e.preventDefault();            // will prevent page reloading
+            socket.emit('chat message', (name + ':  ' + $('#m').val()));
+            $('#messages').append($('<li id="list">').text('You:  ' + $('#m').val()));
+            $('#m').val('');
+            return false;
+        });
+        socket.on('chat message', function (msg) {
+            $('#messages').append($('<li>').text(msg));
+        });
+  		//The emitted chat message event when received by the server, it will be broadcasted to all the other user as another emit event named chat message
+    </script>
+</body>
+
+</html>
